@@ -1,88 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>工單作業中心</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#1f6feb">
-<style>
-body{font-family:-apple-system,sans-serif;margin:0;background:#f2f4f7;color:#111}
-header{background:#1f6feb;color:#fff;padding:16px;font-size:20px;font-weight:bold}
+html{color-scheme:dark}
+body{font-family:-apple-system,sans-serif;margin:0;background:#1c1b1a;color:#ece6df}
+header{background:#c98b6b;color:#1f1a16;padding:16px;font-size:20px;font-weight:bold}
 main{max-width:640px;margin:auto;padding:12px}
 .tabs{display:flex;gap:6px;margin-bottom:12px}
-.tabs button{flex:1;padding:12px 4px;border:0;border-radius:8px;background:#dde3ea;font-size:16px}
-.tabs button.on{background:#1f6feb;color:#fff}
-.card{background:#fff;border-radius:10px;padding:12px;margin-bottom:12px}
-label{display:block;margin:10px 0 4px;font-size:14px;color:#555}
-input,select{width:100%;box-sizing:border-box;padding:12px;font-size:17px;border:1px solid #ccd;border-radius:8px}
-.go{width:100%;margin-top:14px;padding:14px;font-size:18px;border:0;border-radius:8px;background:#1f6feb;color:#fff}
-.rec{border-bottom:1px solid #eee;padding:8px 0;font-size:15px}
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;background:#888;margin-right:6px}
-.fix{background:#d9480f}
-.sub{color:#777;font-size:13px}
-</style>
-</head>
-<body>
-<header>工單作業中心</header>
-<main>
-  <div class="tabs" id="tabs"></div>
-  <div class="card">
-    <label>工單號</label><input id="wo">
-    <label>料號</label><input id="pn">
-    <label>數量</label><input id="qty" type="number" inputmode="numeric">
-    <label>人員</label><input id="who">
-    <div id="reasonBox" style="display:none">
-      <label>原因</label>
-      <select id="reason"><option>換料</option><option>故障</option></select>
-    </div>
-    <label>備註（選填）</label><input id="note">
-    <button class="go" onclick="submit()">送出</button>
-  </div>
-  <div class="card">
-    <input id="q" placeholder="搜尋工單號／料號／人員" oninput="render()">
-    <div id="list"></div>
-  </div>
-</main>
-<script>
-const TYPES=['領料','未使用退回','換料／故障退回'];
-let cur=0;
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const load=()=>{try{return JSON.parse(localStorage.getItem('recs')||'[]')}catch(e){return[]}};
-const save=r=>localStorage.setItem('recs',JSON.stringify(r));
-
-function tabs(){
-  $('tabs').innerHTML=TYPES.map((t,i)=>`<button class="${i==cur?'on':''}" onclick="cur=${i};tabs()">${t}</button>`).join('');
-  $('reasonBox').style.display=cur==2?'block':'none';
-}
-function submit(){
-  const wo=$('wo').value.trim(),pn=$('pn').value.trim(),qty=+$('qty').value,who=$('who').value.trim();
-  if(!wo||!pn||!qty||!who){alert('請填寫工單號、料號、數量、人員');return}
-  const rs=load();
-  const base={time:new Date().toLocaleString('zh-TW',{hour12:false}),wo,pn,qty,who,note:$('note').value.trim()};
-  if(cur==2){
-    const reason=$('reason').value;
-    rs.unshift({...base,type:'換料／故障退回',reason});
-    if(reason=='故障') rs.unshift({...base,type:'送修',reason:'由故障退回自動建立',status:'待送修'});
-  } else rs.unshift({...base,type:TYPES[cur]});
-  save(rs);
-  ['pn','qty','note'].forEach(i=>$(i).value='');
-  render();
-}
-function render(){
-  const q=$('q').value.trim();
-  const rs=load().filter(r=>!q||JSON.stringify(r).includes(q));
-  $('list').innerHTML=rs.slice(0,100).map(r=>`<div class="rec">
-    <span class="tag ${r.type=='送修'?'fix':''}">${esc(r.type)}</span>
-    <b>${esc(r.pn)}</b> × ${esc(r.qty)}
-    <div class="sub">${esc(r.time)}｜工單 ${esc(r.wo)}｜${esc(r.who)}${r.reason?'｜'+esc(r.reason):''}${r.note?'｜'+esc(r.note):''}</div>
-  </div>`).join('')||'<div class="sub">尚無紀錄</div>';
-}
-tabs();render();
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-</script>
-</body>
-</html>
+.tabs button{flex:1;padding:12px 4px;border:0;border-radius:8px;background:#3a3632;color:#d9cfc4;font-size:16px}
+.tabs button.on{background:#c98b6b;color:#1f1a16;font-weight:bold}
+.card{background:#2a2826;border-radius:10px;padding:12px;margin-bottom:12px}
+label{display:block;margin:10px 0 4px;font-size:14px;color:#a89f95}
+input,select{width:100%;box-sizing:border-box;padding:12px;font-size:17px;border:1px solid #4a4642;border-radius:8px;background:#1f1e1c;color:#ece6df}
+input::placeholder{color:#7d756c}
+.go{width:100%;margin-top:14px;padding:14px;font-size:18px;border:0;border-radius:8px;background:#c98b6b;color:#1f1a16;font-weight:bold}
+.rec{border-bottom:1px solid #3a3632;padding:8px 0;font-size:15px}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;color:#1f1a16;background:#a89f95;margin-right:6px}
+.fix{background:#c98b6b}
+.sub{color:#9a928a;font-size:13px}
